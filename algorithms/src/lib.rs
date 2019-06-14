@@ -3,51 +3,48 @@ pub mod sort;
 #[cfg(test)]
 mod tests {
 
+    use std::fmt::*;
     use super::sort::*;
 
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-        let mut l = Vec::new();
-        l.push(1);
-        l[0] = 2;
-        l.push(3);
-        l.push(1);
-        print_vec(l.as_ref());
-        quick_sort(&mut l);
-        print_vec(l.as_ref());
+    fn test_bubble_sort() {
+        let sorter = Sorters::new::<i32>(Sorters::Bubble);
+        test_sort_i32(sorter);
     }
 
     #[test]
-    fn it_works_2() {
-        assert_eq!(2 + 2, 4);
-        let mut l = Vec::new();
-        l.push(1);
-        l[0] = 2;
-        l.push(3);
-        l.push(1);
-        print_vec(l.as_ref());
-        bubble_sort(&mut l);
-        print_vec(l.as_ref());
+    fn test_selection_sort() {
+        let sorter = Sorters::new::<i32>(Sorters::Selection);
+        test_sort_i32(sorter);
     }
 
     #[test]
-    fn it_works_3() {
-        assert_eq!(2 + 2, 4);
+    fn test_quick_sort() {
+        let sorter = Sorters::new::<i32>(Sorters::Quick);
+        test_sort_i32(sorter);
+    }
+
+    fn test_sort_i32(sorter: &Sorter<i32>) {
         let mut l = Vec::new();
         l.push(1);
         l[0] = 2;
         l.push(3);
         l.push(1);
-        print_vec(l.as_ref());
-        selection_sort(&mut l);
-        print_vec(l.as_ref());
+
+        let expected = vec![1, 2, 3];
+        test_sort(sorter, &mut l, &expected);
     }
 
-    fn print_vec(l: &Vec<i32>) {
+    fn test_sort<T: Ord + Display + Debug>(sorter: &Sorter<T>, l: &mut Vec<T>, expected: &Vec<T>) {
+        print_vec(l.as_ref());
+        sorter.sort(l);
+        print_vec(l.as_ref());
+        assert_eq!(l, expected);
+    }
+
+    fn print_vec<T: Display>(l: &Vec<T>) {
         for e in l {
             println!("{} ", e);
         }
-        println!();
     }
 }
