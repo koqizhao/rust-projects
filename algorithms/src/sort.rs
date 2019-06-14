@@ -11,6 +11,9 @@ use insertion_sort::*;
 mod quick_sort;
 use quick_sort::*;
 
+mod merge_sort;
+use merge_sort::*;
+
 mod swap;
 
 pub trait Sorter<T>
@@ -24,12 +27,14 @@ pub enum Sorters {
     Selection,
     Insertion,
     Quick,
+    Merge,
 }
 
 static BUBBLE_SORTER: BubbleSorter = BubbleSorter { };
 static SELECTION_SORTER: SelectionSorter = SelectionSorter { };
 static INSERTION_SORTER: InsertionSorter = InsertionSorter { };
 static QUICK_SORTER: QuickSorter = QuickSorter { };
+static MERGE_SORTER: MergeSorter = MergeSorter { };
 
 impl Sorters {
 
@@ -39,6 +44,7 @@ impl Sorters {
             Sorters::Selection => &SELECTION_SORTER,
             Sorters::Insertion => &INSERTION_SORTER,
             Sorters::Quick => &QUICK_SORTER,
+            Sorters::Merge => &MERGE_SORTER,
         }
     } 
 

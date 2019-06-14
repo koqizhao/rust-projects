@@ -30,6 +30,12 @@ mod tests {
         test_sort_i32(sorter);
     }
 
+    #[test]
+    fn test_merge_sort() {
+        let sorter = Sorters::new::<i32>(Sorters::Merge);
+        test_sort_i32(sorter);
+    }
+
     fn test_sort_i32(sorter: &Sorter<i32>) {
         let mut l = Vec::new();
         l.push(1);
