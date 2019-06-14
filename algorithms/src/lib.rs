@@ -19,6 +19,12 @@ mod tests {
     }
 
     #[test]
+    fn test_insertion_sort() {
+        let sorter = Sorters::new::<i32>(Sorters::Insertion);
+        test_sort_i32(sorter);
+    }
+
+    #[test]
     fn test_quick_sort() {
         let sorter = Sorters::new::<i32>(Sorters::Quick);
         test_sort_i32(sorter);
