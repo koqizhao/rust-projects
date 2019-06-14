@@ -8,31 +8,31 @@ mod tests {
 
     #[test]
     fn test_bubble_sort() {
-        let sorter = Sorters::new::<i32>(Sorters::Bubble);
+        let sorter = Sorters::new::<i32>(Sorters::BubbleSort);
         test_sort_i32(sorter);
     }
 
     #[test]
     fn test_selection_sort() {
-        let sorter = Sorters::new::<i32>(Sorters::Selection);
+        let sorter = Sorters::new::<i32>(Sorters::SelectionSort);
         test_sort_i32(sorter);
     }
 
     #[test]
     fn test_insertion_sort() {
-        let sorter = Sorters::new::<i32>(Sorters::Insertion);
+        let sorter = Sorters::new::<i32>(Sorters::InsertionSort);
         test_sort_i32(sorter);
     }
 
     #[test]
     fn test_quick_sort() {
-        let sorter = Sorters::new::<i32>(Sorters::Quick);
+        let sorter = Sorters::new::<i32>(Sorters::QuickSort);
         test_sort_i32(sorter);
     }
 
     #[test]
     fn test_merge_sort() {
-        let sorter = Sorters::new::<i32>(Sorters::Merge);
+        let sorter = Sorters::new::<i32>(Sorters::MergeSort);
         test_sort_i32(sorter);
     }
 

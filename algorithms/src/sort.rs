@@ -23,11 +23,11 @@ pub trait Sorter<T>
 }
 
 pub enum Sorters {
-    Bubble,
-    Selection,
-    Insertion,
-    Quick,
-    Merge,
+    BubbleSort,
+    SelectionSort,
+    InsertionSort,
+    QuickSort,
+    MergeSort,
 }
 
 static BUBBLE_SORTER: BubbleSorter = BubbleSorter { };
@@ -40,11 +40,11 @@ impl Sorters {
 
     pub fn new<'a, T: Ord>(t: Sorters) -> &'a Sorter<T> {
         match t {
-            Sorters::Bubble => &BUBBLE_SORTER,
-            Sorters::Selection => &SELECTION_SORTER,
-            Sorters::Insertion => &INSERTION_SORTER,
-            Sorters::Quick => &QUICK_SORTER,
-            Sorters::Merge => &MERGE_SORTER,
+            Sorters::BubbleSort => &BUBBLE_SORTER,
+            Sorters::SelectionSort => &SELECTION_SORTER,
+            Sorters::InsertionSort => &INSERTION_SORTER,
+            Sorters::QuickSort => &QUICK_SORTER,
+            Sorters::MergeSort => &MERGE_SORTER,
         }
     } 
 
