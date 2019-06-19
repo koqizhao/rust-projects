@@ -24,6 +24,7 @@ mod tests {
     }
 }
 
+#[allow(dead_code)] 
 struct TestData {
     x: i32,
     y: String
@@ -37,6 +38,7 @@ impl Display for TestData {
 
 }
 
+#[allow(dead_code)] 
 fn to_string<T: ToString>(l: &Vec<T>) -> String {
     let mut s = String::from("[");
     for (i, e) in l.iter().enumerate() {
