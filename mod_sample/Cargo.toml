@@ -1,0 +1,10 @@
+[package]
+name = "mod_sample"
+version = "0.1.0"
+authors = ["Qiang Zhao <koqizhao@outlook.com>"]
+edition = "2018"
+
+[lib]
+name = "mod_sample"
+
+[dependencies]
