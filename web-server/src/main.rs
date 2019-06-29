@@ -1,3 +1,4 @@
+mod protocol;
 mod server_handler;
 mod server;
 
@@ -38,10 +39,7 @@ impl Serializer for MySerializer {
     type Error = serde_json::error::Error;
 
     fn serialize<T: Serialize>(&self, v: &T) -> Result<Vec<u8>, Self::Error> {
-        match serde_json::to_string(v) {
-            Ok(s) => Ok(s.into_bytes()),
-            Err(err) => Err(err)
-        }
+        Ok(serde_json::to_string(v)?.into_bytes())
     }
 
     fn deserialize<T: DeserializeOwned>(&self, bytes: Vec<u8>) -> Result<T, Self::Error> {

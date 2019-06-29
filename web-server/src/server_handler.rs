@@ -47,16 +47,14 @@ impl<Req: DeserializeOwned, Res: Serialize, S: Serializer, H: RequestHandler<Req
 
     pub fn handle(&self, mut stream: TcpStream) {
         let mut buf: [u8; 1024] = [0u8; 1024];
-        let size;
-        match stream.read(&mut buf) {
-            Ok(l) => size = l,
+        let size = match stream.read(&mut buf) {
+            Ok(l) => l,
             Err(e) => close_return!(stream, e)
-        }
+        };
 
         println!("from: {}", String::from_utf8_lossy(&buf[0..size]));
 
-        let req = self.serializer.deserialize::<Req>(Vec::from(&buf[0..size]));
-        match req {
+        match self.serializer.deserialize::<Req>(Vec::from(&buf[0..size])) {
             Ok(r) => {
                 match self.handler.handle(&r) {
                     Ok(res) => {

@@ -59,4 +59,16 @@ mod tests {
             println!("{} ", e);
         }
     }
+
+    #[test]
+    fn show_life() {
+        let mut x = new(10);
+        *x += 1;
+        println!("{}", x);
+    }
+
+    fn new<T>(x: T) -> Box<T> {
+        Box::new(x)
+    }
+
 }
