@@ -1,4 +1,3 @@
-use std::sync::mpsc;
 use std::net::{ TcpStream, Shutdown };
 use std::marker::PhantomData;
 
@@ -21,9 +20,19 @@ macro_rules! close_return {
     );
 }
 
+pub trait ServerHandler {
+    fn handle(&self, stream: TcpStream);
+}
+
+pub trait RequestHandler<Req, Res> {
+
+    type Error: std::error::Error;
+
+    fn handle(&self, req: &Req) -> Result<Res, Self::Error>;
+
+}
+
 pub struct WebServerHandler<P: Protocol, S: Serializer, Req, Res, H: RequestHandler<Req, Res>> {
-    sender: mpsc::Sender<TcpStream>,
-    receiver: mpsc::Receiver<TcpStream>,
     protocol: P,
     serializer: S,
     handler: H,
@@ -35,10 +44,7 @@ impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize
     WebServerHandler<P, S, Req, Res, H> {
 
     pub fn new(protocol: P, serializer: S, handler: H) -> Self {
-        let (sender, receiver) = mpsc::channel::<TcpStream>();
         WebServerHandler {
-            sender,
-            receiver,
             protocol,
             serializer,
             handler,
@@ -46,8 +52,13 @@ impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize
             p2: PhantomData
         }
     }
+}
 
-    pub fn handle(&self, mut stream: TcpStream) {
+impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize, H: RequestHandler<Req, Res>>
+    ServerHandler for
+    WebServerHandler<P, S, Req, Res, H> {
+
+    fn handle(&self, mut stream: TcpStream) {
         let input = match self.protocol.read(&mut stream) {
             Ok(s) => s,
             Err(err) => close_return!(stream, err) 
@@ -75,12 +86,3 @@ impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize
     }
 
 }
-
-pub trait RequestHandler<Req, Res> {
-
-    type Error: std::error::Error;
-
-    fn handle(&self, req: &Req) -> Result<Res, Self::Error>;
-
-}
-

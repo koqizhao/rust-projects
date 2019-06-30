@@ -2,35 +2,25 @@ use std::net::*;
 use std::io::Error;
 use std::thread;
 use std::time;
-use std::marker::PhantomData;
+use std::sync::Arc;
 
-use serde::{ Serialize };
-use serde::de::DeserializeOwned;
-
-use crate::protocol::*;
-use crate::serializer::*;
 use super::server_handler::*;
 
-pub struct WebServer<P: Protocol, S: Serializer, Req, Res, H: RequestHandler<Req, Res>> {
+pub struct WebServer<T: ServerHandler> {
     host: String,
     port: u16,
-    handler: WebServerHandler<P, S, Req, Res, H>,
     listener: Option<TcpListener>,
-    p1: PhantomData<Req>,
-    p2: PhantomData<Res>
+    handler: Arc<T>,
 }
 
-impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize, H: RequestHandler<Req, Res>>
-    WebServer<P, S, Req, Res, H> {
+impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
 
-    pub fn new(host: String, port: u16, handler: WebServerHandler<P, S, Req, Res, H>) -> Self {
+    pub fn new(host: String, port: u16, handler: T) -> Self {
         WebServer {
             host,
             port,
             listener: None,
-            handler,
-            p1: PhantomData,
-            p2: PhantomData
+            handler: Arc::new(handler)
         }
     }
 
@@ -71,7 +61,10 @@ impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize
         loop {
             match self.listener().accept() {
                 Ok((stream, _)) => {
-                    self.handler.handle(stream);
+                    let h = self.handler.clone();
+                    thread::spawn(move || {
+                        h.handle(stream);
+                    });
                 },
                 Err(err) => {
                     println!("Accept request error: {}", err);
