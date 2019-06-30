@@ -61,7 +61,13 @@ impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
     }
 
     fn accept(&self) {
+        let mut i = 0;
         loop {
+            i += 1;
+            if i > 6 {
+                break;
+            }
+
             match self.listener().accept() {
                 Ok((stream, _)) => {
                     let h = self.handler.clone();
