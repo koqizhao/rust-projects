@@ -1,28 +1,29 @@
-
-#![allow(dead_code)]
-
 use std::net::*;
 use std::io::Error;
 use std::thread;
 use std::time;
 use std::marker::PhantomData;
 
-use super::server_handler::*;
 use serde::{ Serialize };
 use serde::de::DeserializeOwned;
 
-pub struct WebServer<Req, Res, S: Serializer, H: RequestHandler<Req, Res>> {
+use crate::protocol::*;
+use crate::serializer::*;
+use super::server_handler::*;
+
+pub struct WebServer<P: Protocol, S: Serializer, Req, Res, H: RequestHandler<Req, Res>> {
     host: String,
     port: u16,
-    handler: WebServerHandler<Req, Res, S, H>,
+    handler: WebServerHandler<P, S, Req, Res, H>,
     listener: Option<TcpListener>,
     p1: PhantomData<Req>,
     p2: PhantomData<Res>
 }
 
-impl<Req: DeserializeOwned, Res: Serialize, S: Serializer, H: RequestHandler<Req, Res>> WebServer<Req, Res, S, H> {
+impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize, H: RequestHandler<Req, Res>>
+    WebServer<P, S, Req, Res, H> {
 
-    pub fn new(host: String, port: u16, handler: WebServerHandler<Req, Res, S, H>) -> Self {
+    pub fn new(host: String, port: u16, handler: WebServerHandler<P, S, Req, Res, H>) -> Self {
         WebServer {
             host,
             port,

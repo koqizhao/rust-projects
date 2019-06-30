@@ -1,13 +1,12 @@
-
-#![allow(dead_code)]
-
 use std::sync::mpsc;
 use std::net::{ TcpStream, Shutdown };
 use std::marker::PhantomData;
-use std::io::{ Read, Write };
 
 use serde::{ Serialize };
 use serde::de::DeserializeOwned;
+
+use crate::protocol::Protocol;
+use crate::serializer::Serializer;
 
 macro_rules! close_return {
     ($stream: ident, $e: ident) => (
@@ -22,22 +21,25 @@ macro_rules! close_return {
     );
 }
 
-pub struct WebServerHandler<Req, Res, S: Serializer, H: RequestHandler<Req, Res>> {
+pub struct WebServerHandler<P: Protocol, S: Serializer, Req, Res, H: RequestHandler<Req, Res>> {
     sender: mpsc::Sender<TcpStream>,
     receiver: mpsc::Receiver<TcpStream>,
+    protocol: P,
     serializer: S,
     handler: H,
     p1: PhantomData<Req>,
     p2: PhantomData<Res>
 }
 
-impl<Req: DeserializeOwned, Res: Serialize, S: Serializer, H: RequestHandler<Req, Res>> WebServerHandler<Req, Res, S, H> {
+impl<P: Protocol, S: Serializer, Req: DeserializeOwned + Default, Res: Serialize, H: RequestHandler<Req, Res>>
+    WebServerHandler<P, S, Req, Res, H> {
 
-    pub fn new(serializer: S, handler: H) -> Self {
+    pub fn new(protocol: P, serializer: S, handler: H) -> Self {
         let (sender, receiver) = mpsc::channel::<TcpStream>();
         WebServerHandler {
             sender,
             receiver,
+            protocol,
             serializer,
             handler,
             p1: PhantomData,
@@ -46,27 +48,20 @@ impl<Req: DeserializeOwned, Res: Serialize, S: Serializer, H: RequestHandler<Req
     }
 
     pub fn handle(&self, mut stream: TcpStream) {
-        let mut buf: [u8; 1024] = [0u8; 1024];
-        let size = match stream.read(&mut buf) {
-            Ok(l) => l,
-            Err(e) => close_return!(stream, e)
+        let input = match self.protocol.read(&mut stream) {
+            Ok(s) => s,
+            Err(err) => close_return!(stream, err) 
         };
 
-        println!("from: {}", String::from_utf8_lossy(&buf[0..size]));
-
-        match self.serializer.deserialize::<Req>(Vec::from(&buf[0..size])) {
+        match self.serializer.deserialize::<Req>(&input) {
             Ok(r) => {
                 match self.handler.handle(&r) {
                     Ok(res) => {
                         match self.serializer.serialize(&res) {
-                            Ok(mut buf) => {
-                                match stream.write_all(&mut buf) {
+                            Ok(s) => {
+                                match self.protocol.write(&mut stream, s.as_bytes()) {
                                     Err(e) => close_return!(stream, e),
                                     _ => ()
-                                }
-
-                                if let Result::Err(e) = stream.flush() {
-                                    close_return!(stream, e);
                                 }
                             },
                             Err(e) => close_return!(stream, e)
@@ -78,16 +73,6 @@ impl<Req: DeserializeOwned, Res: Serialize, S: Serializer, H: RequestHandler<Req
             Err(e) => close_return!(stream, e)
         } 
     }
-
-}
-
-pub trait Serializer {
-
-    type Error: std::error::Error;
-
-    fn serialize<T: Serialize>(&self, v: &T) -> Result<Vec<u8>, Self::Error>;
-
-    fn deserialize<T: DeserializeOwned>(&self, bytes: Vec<u8>) -> Result<T, Self::Error>;
 
 }
 
