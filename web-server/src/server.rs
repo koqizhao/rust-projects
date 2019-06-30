@@ -5,12 +5,14 @@ use std::time;
 use std::sync::Arc;
 
 use super::server_handler::*;
+use crate::threadpool::{ self, ThreadPool };
 
 pub struct WebServer<T: ServerHandler> {
     host: String,
     port: u16,
     listener: Option<TcpListener>,
     handler: Arc<T>,
+    thread_pool: Box<ThreadPool>
 }
 
 impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
@@ -20,7 +22,8 @@ impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
             host,
             port,
             listener: None,
-            handler: Arc::new(handler)
+            handler: Arc::new(handler),
+            thread_pool: Box::new(threadpool::new(4))
         }
     }
 
@@ -62,9 +65,14 @@ impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
             match self.listener().accept() {
                 Ok((stream, _)) => {
                     let h = self.handler.clone();
+                    /*
                     thread::spawn(move || {
                         h.handle(stream);
                     });
+                    */
+                    self.thread_pool.execute(Box::new(move || {
+                        h.handle(stream);
+                    }));
                 },
                 Err(err) => {
                     println!("Accept request error: {}", err);

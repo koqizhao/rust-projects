@@ -5,6 +5,7 @@ mod serializer;
 mod server_handler;
 mod server;
 mod service;
+mod threadpool;
 
 use protocol::*;
 use serializer::*;
