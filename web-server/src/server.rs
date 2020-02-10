@@ -36,7 +36,7 @@ impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
     }
 
     pub fn start(&mut self) -> Option<Error> {
-        match &self.listener {
+        match self.listener.as_ref() {
             Some(_) => {
                 self.listener = None;
             },
@@ -44,12 +44,12 @@ impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
         }
 
         let addr = self.host.clone() + ":" + &self.port.to_string();
-        let band_result = TcpListener::bind(addr);
-        if let Err(err) = band_result {
+        let bind_result = TcpListener::bind(addr);
+        if let Err(err) = bind_result {
             return Some(err);
         }
 
-        self.listener = Some(band_result.unwrap());
+        self.listener = Some(bind_result.unwrap());
 
         self.accept();
 

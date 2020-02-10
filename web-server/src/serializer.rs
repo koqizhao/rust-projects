@@ -20,7 +20,7 @@ impl Serializer for JsonSerializer {
     type Error = serde_json::error::Error;
 
     fn serialize<T: Serialize>(&self, v: &T) -> Result<String, Self::Error> {
-        Ok(serde_json::to_string(v)?)
+        serde_json::to_string(v)
     }
 
     fn deserialize<T: DeserializeOwned + Default>(&self, s: &str) -> Result<T, Self::Error> {
