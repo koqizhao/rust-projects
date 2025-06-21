@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 #[cfg(test)]
 mod tests {
 
@@ -9,25 +11,21 @@ mod tests {
         let b: Box<i32> = Box::new(10);
 
         let mut x = X;
-        let y = Y {
-            x,
-            y: X
-        };
+        let y = Y { x, y: X };
 
         x = y.x;
         println!("{:?}", y.y);
 
         println!("\nnested array\n");
-        let arr: [[i32;1]; 1] = [[0]];
+        let arr: [[i32; 1]; 1] = [[0]];
         println!("{:?}", arr);
     }
-    
+
     #[derive(Debug)]
     struct X;
 
     struct Y {
         x: X,
-        y: X
+        y: X,
     }
-
 }

@@ -1,0 +1,10 @@
+[workspace]
+resolver="3"
+members = [
+    "algorithms",
+    "example",
+    "micro_sample",
+    "minigrep",
+    "mod_sample",
+    "web-server",
+]

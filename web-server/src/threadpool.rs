@@ -1,14 +1,15 @@
 use std::sync::mpsc::*;
-use std::sync::{ Arc, Mutex };
-use std::thread::{ self, JoinHandle };
+use std::sync::{Arc, Mutex};
+use std::thread::{self, JoinHandle};
 
-type F = FnOnce() + Send + 'static;
+type F = dyn FnOnce() + Send + 'static;
 
 enum Message {
     Execute(Box<F>),
-    Terminate
+    Terminate,
 }
 
+#[allow(drop_bounds)]
 pub trait ThreadPool: Drop {
     fn execute(&self, f: Box<F>);
 }
@@ -32,19 +33,18 @@ pub fn new(size: usize) -> impl ThreadPool {
 struct MyThreadPool {
     size: usize,
     workers: Vec<Worker>,
-    sender: Sender<Message>
+    sender: Sender<Message>,
 }
 
 impl ThreadPool for MyThreadPool {
-
     fn execute(&self, f: Box<F>) {
-        self.sender.send(Message::Execute(f)).expect("send job fail");
+        self.sender
+            .send(Message::Execute(f))
+            .expect("send job fail");
     }
-
 }
 
 impl Drop for MyThreadPool {
-
     fn drop(&mut self) {
         for _ in 0..self.size {
             self.sender.send(Message::Terminate).unwrap();
@@ -56,16 +56,14 @@ impl Drop for MyThreadPool {
             }
         }
     }
-
 }
 
 struct Worker {
     id: usize,
-    join_handle: Option<JoinHandle<()>>
+    join_handle: Option<JoinHandle<()>>,
 }
 
 impl Worker {
-
     fn new(id: usize, receiver: Arc<Mutex<Receiver<Message>>>) -> Self {
         let join_handle = thread::spawn(move || {
             loop {
@@ -75,7 +73,7 @@ impl Worker {
                         println!("execute a job");
                         job();
                         println!("execute complete");
-                    },
+                    }
                     Message::Terminate => {
                         println!("terminate the thread");
                         break;
@@ -86,8 +84,7 @@ impl Worker {
 
         Worker {
             id,
-            join_handle: Some(join_handle)
+            join_handle: Some(join_handle),
         }
     }
-
 }

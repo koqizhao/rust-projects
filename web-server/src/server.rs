@@ -1,29 +1,28 @@
-use std::net::*;
 use std::io::Error;
+use std::net::*;
+use std::sync::Arc;
 use std::thread;
 use std::time;
-use std::sync::Arc;
 
 use super::server_handler::*;
-use crate::threadpool::{ self, ThreadPool };
+use crate::threadpool::{self, ThreadPool};
 
 pub struct WebServer<T: ServerHandler> {
     host: String,
     port: u16,
     listener: Option<TcpListener>,
     handler: Arc<T>,
-    thread_pool: Box<ThreadPool>
+    thread_pool: Box<dyn ThreadPool>,
 }
 
 impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
-
     pub fn new(host: String, port: u16, handler: T) -> Self {
         WebServer {
             host,
             port,
             listener: None,
             handler: Arc::new(handler),
-            thread_pool: Box::new(threadpool::new(4))
+            thread_pool: Box::new(threadpool::new(4)),
         }
     }
 
@@ -39,8 +38,8 @@ impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
         match self.listener.as_ref() {
             Some(_) => {
                 self.listener = None;
-            },
-            _ => ()
+            }
+            _ => (),
         }
 
         let addr = self.host.clone() + ":" + &self.port.to_string();
@@ -79,7 +78,7 @@ impl<T: ServerHandler + Send + Sync + 'static> WebServer<T> {
                     self.thread_pool.execute(Box::new(move || {
                         h.handle(stream);
                     }));
-                },
+                }
                 Err(err) => {
                     println!("Accept request error: {}", err);
                     thread::sleep(time::Duration::from_millis(10));

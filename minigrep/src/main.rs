@@ -1,8 +1,6 @@
+use minigrep::*;
+
 use std::env::*;
-
-mod lib;
-
-use lib::*;
 
 fn main() {
     let result = run(args()).unwrap_or_else(|err| {

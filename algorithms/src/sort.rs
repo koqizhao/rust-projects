@@ -1,4 +1,3 @@
-
 mod bubble_sort;
 use bubble_sort::*;
 
@@ -17,8 +16,9 @@ use merge_sort::*;
 mod swap;
 
 pub trait Sorter<T>
-    where T: Ord
- {
+where
+    T: Ord,
+{
     fn sort(&self, l: &mut Vec<T>);
 }
 
@@ -30,15 +30,14 @@ pub enum Sorters {
     MergeSort,
 }
 
-static BUBBLE_SORTER: BubbleSorter = BubbleSorter { };
-static SELECTION_SORTER: SelectionSorter = SelectionSorter { };
-static INSERTION_SORTER: InsertionSorter = InsertionSorter { };
-static QUICK_SORTER: QuickSorter = QuickSorter { };
-static MERGE_SORTER: MergeSorter = MergeSorter { };
+static BUBBLE_SORTER: BubbleSorter = BubbleSorter {};
+static SELECTION_SORTER: SelectionSorter = SelectionSorter {};
+static INSERTION_SORTER: InsertionSorter = InsertionSorter {};
+static QUICK_SORTER: QuickSorter = QuickSorter {};
+static MERGE_SORTER: MergeSorter = MergeSorter {};
 
 impl Sorters {
-
-    pub fn new<'a, T: Ord>(t: Sorters) -> &'a Sorter<T> {
+    pub fn new<'a, T: Ord>(t: Sorters) -> &'a dyn Sorter<T> {
         match t {
             Sorters::BubbleSort => &BUBBLE_SORTER,
             Sorters::SelectionSort => &SELECTION_SORTER,
@@ -46,6 +45,5 @@ impl Sorters {
             Sorters::QuickSort => &QUICK_SORTER,
             Sorters::MergeSort => &MERGE_SORTER,
         }
-    } 
-
+    }
 }

@@ -3,8 +3,8 @@ pub mod sort;
 #[cfg(test)]
 mod tests {
 
-    use std::fmt::*;
     use super::sort::*;
+    use std::fmt::*;
 
     #[test]
     fn test_bubble_sort() {
@@ -36,7 +36,7 @@ mod tests {
         test_sort_i32(sorter);
     }
 
-    fn test_sort_i32(sorter: &Sorter<i32>) {
+    fn test_sort_i32(sorter: &dyn Sorter<i32>) {
         let mut l = Vec::new();
         l.push(1);
         l[0] = 2;
@@ -47,7 +47,11 @@ mod tests {
         test_sort(sorter, &mut l, &expected);
     }
 
-    fn test_sort<T: Ord + Display + Debug>(sorter: &Sorter<T>, l: &mut Vec<T>, expected: &Vec<T>) {
+    fn test_sort<T: Ord + Display + Debug>(
+        sorter: &dyn Sorter<T>,
+        l: &mut Vec<T>,
+        expected: &Vec<T>,
+    ) {
         print_vec(l.as_ref());
         sorter.sort(l);
         print_vec(l.as_ref());
@@ -70,5 +74,4 @@ mod tests {
     fn new<T>(x: T) -> Box<T> {
         Box::new(x)
     }
-
 }
