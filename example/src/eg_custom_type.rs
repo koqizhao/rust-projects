@@ -1,4 +1,3 @@
-
 #![allow(dead_code)]
 
 #[cfg(test)]
@@ -12,17 +11,15 @@ mod tests {
         match e {
             TestEnum::XX => {
                 println!("XX");
-            },
+            }
             _ => {
                 println!("else");
             }
         }
     }
-
 }
 
 enum TestEnum {
     XX,
-    YY
+    YY,
 }
-

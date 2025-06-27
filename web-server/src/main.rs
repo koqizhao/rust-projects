@@ -2,8 +2,8 @@
 
 mod protocol;
 mod serializer;
-mod server_handler;
 mod server;
+mod server_handler;
 mod service;
 mod threadpool;
 
@@ -19,7 +19,6 @@ fn main() {
     println!("Server is starting: {}:{}", server.host(), server.port());
     match server.start() {
         Some(err) => println!("Server error: {}", err),
-        None => ()
+        None => (),
     }
 }
-

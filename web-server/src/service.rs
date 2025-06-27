@@ -1,29 +1,29 @@
-use serde::{ Serialize, Deserialize };
+use serde::{Deserialize, Serialize};
 
 use crate::server_handler::RequestHandler;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Request {
-    pub name: String
+    pub name: String,
 }
 
 impl Default for Request {
     fn default() -> Self {
         Request {
-            name: "World".to_owned()
+            name: "World".to_owned(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Response {
-    pub welcome: String
+    pub welcome: String,
 }
 
 impl Default for Response {
     fn default() -> Self {
         Response {
-            welcome: "Hello, World!".to_owned()
+            welcome: "Hello, World!".to_owned(),
         }
     }
 }
@@ -31,14 +31,11 @@ impl Default for Response {
 pub struct MyRequestHandler;
 
 impl RequestHandler<Request, Response> for MyRequestHandler {
-
     type Error = std::io::Error;
 
     fn handle(&self, req: &Request) -> Result<Response, Self::Error> {
         Ok(Response {
-            welcome: format!("Hello, {}!", req.name)
+            welcome: format!("Hello, {}!", req.name),
         })
     }
-
 }
-

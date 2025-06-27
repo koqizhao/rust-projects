@@ -1,7 +1,7 @@
 macro_rules! show {
-    ($name: tt) => (
+    ($name: tt) => {
         println!("show: {}", $name);
-    )
+    };
 }
 
 fn main() {

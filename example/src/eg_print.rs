@@ -13,7 +13,7 @@ mod tests {
 
         let x = TestData {
             x: 1,
-            y: String::from("Hello, world!")
+            y: String::from("Hello, world!"),
         };
 
         eprintln!("{0}, {1}", x, "ok");
@@ -24,21 +24,19 @@ mod tests {
     }
 }
 
-#[allow(dead_code)] 
+#[allow(dead_code)]
 struct TestData {
     x: i32,
-    y: String
+    y: String,
 }
 
 impl Display for TestData {
-
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(f, "({}, {})", self.x, self.y)
     }
-
 }
 
-#[allow(dead_code)] 
+#[allow(dead_code)]
 fn to_string<T: ToString>(l: &Vec<T>) -> String {
     let mut s = String::from("[");
     for (i, e) in l.iter().enumerate() {

@@ -1,4 +1,3 @@
-
 pub fn swap<T: Ord>(l: &mut Vec<T>, i: usize, j: usize) {
     /*
     if i == j {

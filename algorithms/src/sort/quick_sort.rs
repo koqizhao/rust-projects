@@ -2,20 +2,15 @@ use std::cmp::Ordering;
 
 use super::swap::*;
 
-pub struct QuickSorter {
-
-}
+pub struct QuickSorter {}
 
 impl<T: Ord> super::Sorter<T> for QuickSorter {
-
     fn sort(&self, l: &mut Vec<T>) {
         Self::sort(l, 0, l.len());
     }
-
 }
 
 impl QuickSorter {
-
     pub fn sort<T: Ord>(l: &mut Vec<T>, start: usize, end: usize) {
         if start >= end {
             return;
@@ -42,5 +37,4 @@ impl QuickSorter {
         Self::sort(l, start, pivot);
         Self::sort(l, pivot + 1, end);
     }
-
 }

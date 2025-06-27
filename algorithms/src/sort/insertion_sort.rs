@@ -1,19 +1,14 @@
 use std::cmp::Ordering;
 
-pub struct InsertionSorter {
-
-}
+pub struct InsertionSorter {}
 
 impl<T: Ord> super::Sorter<T> for InsertionSorter {
-
     fn sort(&self, l: &mut Vec<T>) {
         Self::sort(l);
     }
-
 }
 
 impl InsertionSorter {
-
     pub fn sort<T: Ord>(l: &mut Vec<T>) {
         if l.len() <= 1 {
             return;
@@ -29,6 +24,4 @@ impl InsertionSorter {
             }
         }
     }
-
 }
-

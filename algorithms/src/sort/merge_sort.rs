@@ -1,19 +1,14 @@
 use std::cmp::Ordering;
 
-pub struct MergeSorter {
-
-}
+pub struct MergeSorter {}
 
 impl<T: Ord> super::Sorter<T> for MergeSorter {
-
     fn sort(&self, l: &mut Vec<T>) {
         Self::sort(l, 0, l.len());
     }
-
 }
 
 impl MergeSorter {
-
     fn sort<T: Ord>(l: &mut Vec<T>, start: usize, end: usize) {
         if end - start <= 1 {
             return;
@@ -51,5 +46,4 @@ impl MergeSorter {
             l.insert(start + k, temp.remove(0));
         }
     }
-
 }

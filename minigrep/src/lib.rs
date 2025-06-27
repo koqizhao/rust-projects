@@ -4,11 +4,10 @@ use std::fs::*;
 
 pub struct Config {
     query: String,
-    file_name: String
+    file_name: String,
 }
 
 impl From<Vec<String>> for Config {
-
     fn from(mut l: Vec<String>) -> Config {
         if l.len() < 3 {
             panic!("args length < 3");
@@ -16,14 +15,12 @@ impl From<Vec<String>> for Config {
 
         Config {
             query: l.remove(1),
-            file_name: l.remove(1)
+            file_name: l.remove(1),
         }
     }
-
 }
 
 impl Config {
-
     fn new(l: &[String]) -> Result<Config, &'static str> {
         if l.len() < 3 {
             return Err("args length < 3");
@@ -31,18 +28,19 @@ impl Config {
 
         Ok(Config {
             query: l[1].clone(),
-            file_name: l[2].clone()
+            file_name: l[2].clone(),
         })
     }
-
 }
 
 impl Display for Config {
-
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{{ query: '{}', file_name: '{}' }}", self.query, self.file_name)
+        write!(
+            f,
+            "{{ query: '{}', file_name: '{}' }}",
+            self.query, self.file_name
+        )
     }
-
 }
 
 pub fn run(args: Args) -> Result<Vec<String>, &'static str> {

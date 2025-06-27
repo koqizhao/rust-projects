@@ -1,5 +1,5 @@
+use std::io::{self, Error, ErrorKind, Read, Write};
 use std::net::TcpStream;
-use std::io::{ self, Read, Write, Error, ErrorKind };
 
 pub trait Protocol {
     fn read(&self, stream: &mut TcpStream) -> Result<String, Error>;
@@ -14,7 +14,6 @@ const EMPTY_LINE: &str = "\r\n";
 pub struct HttpProtocol;
 
 impl Protocol for HttpProtocol {
-
     fn read(&self, stream: &mut TcpStream) -> Result<String, Error> {
         let mut buf = [0u8; 1024];
         let mut bytes = Vec::<u8>::new();
@@ -28,8 +27,8 @@ impl Protocol for HttpProtocol {
                     if size == 0 || size < buf.len() {
                         break;
                     }
-                },
-                Err(err) => return Err(err)
+                }
+                Err(err) => return Err(err),
             }
         }
 
@@ -41,8 +40,8 @@ impl Protocol for HttpProtocol {
                     1 => return Ok(NO_BODY.to_owned()),
                     _ => return Ok(parts[1].to_owned()),
                 }
-            },
-            Err(err) => io::Error::new(ErrorKind::InvalidData, err)
+            }
+            Err(err) => io::Error::new(ErrorKind::InvalidData, err),
         };
         Err(err)
     }

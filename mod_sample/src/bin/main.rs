@@ -1,4 +1,3 @@
-
 use mod_sample::*;
 
 fn main() {
